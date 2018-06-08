@@ -1,33 +1,145 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <link rel="stylesheet" href="main.css">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+
         <script src="main.js"></script>
         <title>Document</title>
     </head>
     <body>
-        <!-- Tab links -->
-        <div class="tab">
-            <button class="tablinks" onclick="openCity(event, '2018')">2018</button>
-            <button class="tablinks" onclick="openCity(event, '2017')">2017</button>
-            <button class="tablinks" onclick="openCity(event, '2016')">2016</button>
-            <button class="tablinks" onclick="openCity(event, 'Older')">Older</button>
-            <button class="tablinks" onclick="renderFields()">Fetch</button>
-        </div>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-light" style="background-color: rgb(156, 23, 23);">
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
+                    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                    <li class="nav-item active">
+                        <!-- <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a> -->
+                        <img src="../images/rev-logo.png" width="95" height="40">
+                    </li>
+                    </ul>
+                    <!-- <form class="form-inline my-2 my-lg-0">
+                        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                        <button class="btn btn-outline-warning my-2 my-sm-0" type="submit">Search</button>
+                        <button class="btn btn-outline-warning my-2 my-sm-0" type="submit">Logout</button>
+                    </form> -->
+                    <ul class="nav nav-pills">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab" aria-controls="pills-home" aria-selected="true">Reimbursement Table</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile" role="tab" aria-controls="pills-profile" aria-selected="false">Create Reimbursement</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="pills-contact-tab" data-toggle="pill" href="#pills-contact" role="tab" aria-controls="pills-contact" aria-selected="false">Contact</a>
+                        </li>
+                    </ul>
+                </div>
+        </nav>     
+        <!-- data table -->
         
-        <!-- Tab content -->
-        <div id="2018" class="tabcontent">
-        </div>
+            <!-- <table id="records" class="table table-striped table-bordered" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>
+                            Username
+                        </th>
+                        <th>Time Submitted</th>
+                        <th>Items</th>
+                        <th>Approver</th>
+                        <th>Status</th>
+                        <th>Receipts</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody">
+                </tbody>
+            </table> -->
         
-        <div id="2017" class="tabcontent">
+        <!--Reimbursement table  -->
+        <div class="tab-content" id="pills-tabContent">
+            <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+                <table id="records" class="table table-striped table-bordered" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>
+                                Username
+                            </th>
+                            <th>Time Submitted</th>
+                            <th>Items</th>
+                            <th>Approver</th>
+                            <th>Status</th>
+                            <th>Receipts</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody">
+                    </tbody>
+                </table>
+            </div>
+        <!-- Create Reimbursement form tab -->
+            <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab"> 
+                <br>
+                <div class="container-fluid">
+                    <div class="row">
+
+                        <!-- Add Item Form -->
+                        <div class=" col-md-4">
+                            <form role="form">
+                                    <div class="form-group">
+                                        <label for="title">Title:</label>
+                                        <input type="text" class="form-control" id="title" maxlength="10">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="pwd">Amount:</label>
+                                        <input type="text" class="form-control" id="amount">
+                                    </div>
+                                    <div class="form-group">
+                                            <label for="description">Description</label>
+                                            <input type="text" class="form-control" id="description" maxlength="40">
+                                    </div>
+                                    <div class="form-group">
+                                            <label for="timeOfExpnese">Time of Expense</label>
+                                            <input type="text" class="form-control" id="timeOfExpense">
+                                    </div>
+                                    <div id ="addItemError"></div>
+                                    <br>
+                                    <button type="button" class="btn btn-default" id="addItem">Add Item</button>
+                                    <button type="button" class="btn btn-default" id="removeItem">RemoveItem</button>
+                            </form>
+                        </div>
+
+
+                        <!-- Reimbursement Table -->
+                        <div class="col-md-8">
+                            <table id="records" class="table table-striped table-bordered" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Amount</th>
+                                        <th>Description</th>
+                                        <th>Time of Expense</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="reimbTableBody">
+                                    
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab"></div>
         </div>
-        
-        <div id="2016" class="tabcontent">
+      
+        <!-- Modals -->
+        <div id="modals">
         </div>
-        <div id="Older" class="tabcontent">
-        </div>
-    </body>
+    </body>  
 </html>
+
+
