@@ -5,35 +5,80 @@ var myNamespace = window.itemNameSpace || {};
 myNamespace.items = [];
 
 
-//http post request 
-// function createReimbDB(){
-//     fetch('http://localhost:3000/createReimb', {
-//         headers: {
-//           'content-type': 'application/json'
-//         },
-//         body: JSON.stringify(myNamespace.items),
-//         credentials: 'include',
-//         method: 'POST'
-//       })
-//       .then(resp => {
-//         if (resp.status === 401) {
-//           throw 'Invalid Credentials';
-//         }
-//         if (resp.status === 200) {
-//           return resp.json();
-//         }
-//         throw 'Unable to obtain data try again later';
-//       })
-//       .then(data => {
-//         appendItemsToTable(data);
+//http logout request
+
+function logout(){
+    fetch('http://localhost:3000/users/logout', {
+        headers: {
+          'content-type': 'application/json'
+        },
+        credentials: 'include',
+        method: 'DELETE'
+      })
+      .then(resp => {
+        if (resp.status === 401) {
+          throw 'Invalid Credentials';
+        }
+        if (resp.status === 200) {
+          return resp.json();
+        }
+        throw 'Unable to obtain data try again later';
+      })
+      .then(data => {
+        console.log('worked');
         
-//       })
-//       .catch(err => {
-//          console.log(err);
-//       })
+      })
+      .catch(err => {
+         console.log(err);
+      })
+}
 
-// }
 
+//http post request 
+function createReimbDB(){
+    if(myNamespace.items.length === 0){
+        console.log('empty array');
+        return;
+    }
+
+    fetch('http://localhost:3000/createReimb', {
+        headers: {
+          'content-type': 'application/json'
+        },
+        body: JSON.stringify(myNamespace.items),
+        credentials: 'include',
+        method: 'POST'
+      })
+      .then(resp => {
+        if (resp.status === 401) {
+          throw 'Invalid Credentials';
+        }
+        if (resp.status === 200) {
+          return resp.json();
+        }
+        throw 'Unable to obtain data try again later';
+      })
+      .then(data => {
+        console.log('got to the daata of post request');
+                
+      })
+      .catch(err => {
+         console.log(err);
+      })
+    removeAllItemsFromReimbTable();
+    myNamespace = []; 
+
+}
+
+
+function removeAllItemsFromReimbTable(){
+    let reimbTable = document.getElementById('reimbTableBody');
+    let length = reimbTable.children.length;
+    while(length !== 0){
+        reimbTable.removeChild(reimbTable.children[length-1]);
+        length = reimbTable.children.length;
+    }
+}
 
 //http call function
 function renderFields(){
