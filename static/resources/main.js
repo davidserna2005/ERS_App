@@ -3,7 +3,8 @@
 var myNamespace = window.itemNameSpace || {};
 //add itmes array
 myNamespace.items = [];
-
+myNamespace.table = {};
+myNamespace.currentTable = {};
 
 //http logout request
 
@@ -20,13 +21,10 @@ function logout(){
           throw 'Invalid Credentials';
         }
         if (resp.status === 200) {
-          return resp.json();
+            console.log(resp);
+            window.location = '../sign-in/sign-in.html'
         }
         throw 'Unable to obtain data try again later';
-      })
-      .then(data => {
-        console.log('worked');
-        
       })
       .catch(err => {
          console.log(err);
@@ -54,19 +52,16 @@ function createReimbDB(){
           throw 'Invalid Credentials';
         }
         if (resp.status === 200) {
-          return resp.json();
+            renderFields();
+            return;
         }
         throw 'Unable to obtain data try again later';
-      })
-      .then(data => {
-        console.log('got to the daata of post request');
-                
       })
       .catch(err => {
          console.log(err);
       })
     removeAllItemsFromReimbTable();
-    myNamespace = []; 
+    myNamespace.items = []; 
 
 }
 
@@ -99,7 +94,16 @@ function renderFields(){
         throw 'Unable to obtain data try again later';
       })
       .then(data => {
-        appendItemsToTable(data);
+        myNamespace.table = data;
+        function sorDesc(a,b){
+            if (a.timeSubmitted > b.timeSubmitted)
+              return -1;
+            if (a.timeSubmitted <  b.timeSubmitted)
+              return 1;
+            return 0;
+        }
+        myNamespace.table.Items = myNamespace.table.Items.sort(sorDesc);
+        appendItemsToTable(myNamespace.table);
         
       })
       .catch(err => {
@@ -110,13 +114,17 @@ function renderFields(){
 //function
 function appendItemsToTable(data){
     console.log(data);
+    let element = document.getElementById('tbody');
+    element.innerHTML = "";
     for(let field of data.Items){
+        console.log(field);
         let date = new Date(field.timeSubmitted);
         // Create New Row
         let newRow = document.createElement('tr');
         newRow.innerHTML = `
+            <tr>
                 <td>${field.username}</td>
-                <td>${date.getFullYear()}</td>
+                <td>${date.getFullYear()}/${date.getMonth()}/${date.getDay()}</td>
                 <td>
                     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#${field.timeSubmitted}">
                                 View Items
@@ -125,8 +133,10 @@ function appendItemsToTable(data){
                 <td>${field.approver}</td>
                 <td>${field.status}</td>
                 <td>$86,000</td>
+            <tr/>
         `;
-        let element = document.getElementById('tbody');
+       
+        // element.insertBefore(newRow, element.firstChild);
         element.appendChild(newRow);
         // Create New Modal
         let newModal = document.createElement('div');
@@ -177,7 +187,6 @@ function appendItemsToTable(data){
                 </div>
         
         `;
-        console.log(field.items[0].title)
         let modals = document.getElementById('modals');
         modals.appendChild(newModal);
     }
@@ -264,13 +273,121 @@ function removeItemFromReimbursementTable(){
     })
 }
 
+//Logout event listener
 
+function logoutEventInitializer(){
+    let logoutButton = document.getElementById('logout');
+    logoutButton = logoutButton.addEventListener('click',logout);
+}
+//Search Bar Even Initializers
+
+function searchBarsInitializers(){
+    let userSearch = document.getElementById('userNameSearch');
+    let statusSearch = document.getElementById('statusSelect');
+    let timeSearch = document.getElementById('timeSubSelect');
+
+    userSearch.addEventListener("keyup", userSearchFunction);
+    statusSearch.addEventListener("change", statusSearchFunction);
+    timeSearch.addEventListener("change", timeSearchFunction);
+}
+
+//Search Functions
+function userSearchFunction(e){
+    let items = [];
+    if(Object.keys(myNamespace.currentTable).length === 0){
+        items = myNamespace.table.Items;
+    }else{
+        items = myNamespace.currentTable.Items;
+    }
+
+    let newArr = items.filter((element)=>{
+        if(element.username.startsWith(e.target.value)){
+            return true;
+        }
+        return false;
+    })
+    console.log(newArr);
+    let objIn = {
+        Items: newArr
+    }
+    appendItemsToTable(objIn);
+}
+
+function statusSearchFunction(e){
+    let items = myNamespace.table.Items;
+    let searchUsername = document.getElementById('userNameSearch');
+    
+    let newArr = items.filter((element)=>{
+        if(element.status === e.target.value){
+            return true;
+        }
+        return false;
+    })
+
+    if(e.target.value ==="All"){
+        newArr = myNamespace.table.Items;
+    }
+
+    console.log(newArr);
+    let objIn = {
+        Items: newArr
+    }
+
+    myNamespace.currentTable = objIn;
+    searchUsername.value = "";
+    appendItemsToTable(objIn);
+}
+
+function timeSearchFunction(e){
+    let searchUsername = document.getElementById('userNameSearch');
+    let items = myNamespace.table.Items;
+
+    function sorAsc(a,b) {
+        if (a.timeSubmitted < b.timeSubmitted)
+          return -1;
+        if (a.timeSubmitted >  b.timeSubmitted)
+          return 1;
+        return 0;
+      }
+    function sorDesc(a,b){
+        if (a.timeSubmitted > b.timeSubmitted)
+          return -1;
+        if (a.timeSubmitted <  b.timeSubmitted)
+          return 1;
+        return 0;
+    }
+
+    if(Object.keys(myNamespace.currentTable).length === 0){
+        items = myNamespace.table.Items;
+    }else{
+        items = myNamespace.currentTable.Items;
+    }    
+
+    let newArr = items.sort(sorDesc);
+    let wholeArr = myNamespace.table.Items.sort(sorDesc);
+    console.log(newArr);
+    if(e.target.value === "Ascending"){
+        newArr = items.sort(sorAsc);
+        wholeArr = myNamespace.table.Items.sort(sorAsc);
+    }
+
+    let objIn = {
+        Items: newArr
+    }
+    searchUsername.value = "";
+    myNamespace.table.Items = wholeArr;
+    appendItemsToTable(objIn);
+      
+
+}
 
 // Fetch User files from database and render them
 
 $(document).ready(()=>{
     renderFields();
     addItemToReimbursementTable();
-    removeItemFromReimbursementTable()
+    removeItemFromReimbursementTable();
+    logoutEventInitializer();
+    searchBarsInitializers()
 }
 )

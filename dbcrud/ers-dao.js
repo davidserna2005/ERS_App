@@ -11,11 +11,18 @@ let docClient = new AWS.DynamoDB.DocumentClient();
 
 
 // Saves a new object to a database
-let save = function (input) {
+let save = function (username, password, fname, lname, email, role) {
 
    let params ={
        TableName: "users",
-       Item: input
+       Item: {
+           username: username,
+           password: password,
+           firstName: fname,
+           lastName: lname,
+           email: email,
+           role: role
+       }
     }
  
    return docClient.put(params).promise();
@@ -71,12 +78,33 @@ function retreiveReimbursement(username,year){
       }).promise();
 }
 
+function retrieveAllReimbursements(){
+    let params = {
+        TableName: "reimbursements",
+        ProjectionExpression: "#ap, #un, #it, #st, #rc, #ts",
+        // FilterExpression: "#un = :username",
+        ExpressionAttributeNames: {
+            "#un": "username",
+            "#st": "status",
+            "#it": "items",
+            "#rc": "receipts",
+            "#ts": "timeSubmitted",
+            "#ap": "approver"
+        },
+    //     ExpressionAttributeValues: {
+    //         ":username": 'employee' 
+    //    }
+    };
+   return docClient.scan(params).promise();
 
 
+}
 
+retrieveAllReimbursements()
 
 //Export Modules
 module.exports.retreiveReimbursement = retreiveReimbursement;
 module.exports.createReimbursement = createReimbursement;
 module.exports.save = save;
 module.exports.readUser = readUser;
+module.exports.retrieveAllReimbursements = retrieveAllReimbursements;

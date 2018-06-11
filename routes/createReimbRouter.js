@@ -8,10 +8,10 @@ router.post('/',(req,res,next)=>{
     console.log('reimbursement router works');
     ersServices.createReimbursement(req.session.username,req.body)
     .then((data)=>{
-        console.log(data);
+        res.statusCode('200');
     })
     .catch((err)=>{
-        console.log(err);
+        res.json(err);
     })
 })
 

@@ -9,8 +9,7 @@ const router = express.Router();
 router.get('/',(req,res,next)=>{
     console.log(req.session);
     if(req.session.role === "employee"){
-        console.log('got here');
-        ersServices.retreiveReimbursement('employee')
+        ersServices.retreiveReimbursement(req.session.username)
         .then((data)=>{
             
             res.json(data);
@@ -19,7 +18,13 @@ router.get('/',(req,res,next)=>{
             res.statusMessage('could not retrieve info');
         })
     }else{
-
+        ersServices.retrieveAllReimbursements()
+        .then((data)=>{
+            res.json(data);
+        })
+        .catch((err)=>{
+            res.statusMessage('could not retrieve info');
+        })
     }
 
     

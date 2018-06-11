@@ -1,8 +1,11 @@
 const ersDao = require('../dbcrud/ers-dao');
+const bcrypt = require('bcrypt');
 
 
-function save(fields){
-    return ersDao.save(fields);
+function save(username, password, fname, lname, email, role){
+    bcrypt.hash(password, 10, function(err, hash) {
+        return ersDao.save(username, hash, fname, lname, email, role);
+      });    
 }
 
 function readUser(username){
@@ -44,10 +47,15 @@ function retreiveReimbursement(username){
     return ersDao.retreiveReimbursement(username);
 }
 
+function retrieveAllReimbursements(){
+    return ersDao.retrieveAllReimbursements();
+}
 
 module.exports.retreiveReimbursement = retreiveReimbursement;
 module.exports.save = save;
 module.exports.readUser = readUser;
 module.exports.createReimbursement = createReimbursement;
+module.exports.retrieveAllReimbursements = retrieveAllReimbursements;
 
 
+save('user1','user1','user1FirstName','user1LastName','user1@user1.com','employee')
