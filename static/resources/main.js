@@ -487,6 +487,8 @@ function renderPaths(){
         appendItemsToTable(myNamespace.table);
     }else if(status.options[status.selectedIndex].value === "pending"){
         statusSearchFunction({target:{value:"pending"}});
+    }else if(status.options[status.selectedIndex].value === "denied"){
+        statusSearchFunction({target:{value:"denied"}});
     }
 
     
