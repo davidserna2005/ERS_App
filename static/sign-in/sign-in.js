@@ -23,7 +23,7 @@ function login() {
       throw 'Unable to login at this time, please try again later';
     })
     .then(data => {
-      window.location = '../resources/main.html';
+      window.location = '../resources/main.html?role='+data.role;
     })
     .catch(err => {
       document.getElementById('error-message').innerText = err;

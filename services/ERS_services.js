@@ -51,11 +51,13 @@ function retrieveAllReimbursements(){
     return ersDao.retrieveAllReimbursements();
 }
 
+function updateReimbursement(username, timeSubmitted, status,approver){
+    return ersDao.updateReimbursement(username,timeSubmitted,status,approver);
+}
+
+module.exports.updateReimbursement = updateReimbursement;
 module.exports.retreiveReimbursement = retreiveReimbursement;
 module.exports.save = save;
 module.exports.readUser = readUser;
 module.exports.createReimbursement = createReimbursement;
 module.exports.retrieveAllReimbursements = retrieveAllReimbursements;
-
-
-save('user1','user1','user1FirstName','user1LastName','user1@user1.com','employee')

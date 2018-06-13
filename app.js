@@ -5,6 +5,7 @@ const path = require('path');
 const userRouter = require('./routes/userRouter');
 const fetchFilesRouter = require('./routes/fetchFilesRouter');
 const createReimbRouter = require('./routes/createReimbRouter');
+const approveDenyReimbRouter = require('./routes/approveDenyReimbRouter');
 
 
 
@@ -51,6 +52,7 @@ app.use((req, resp, next) => {
 app.use('/users',userRouter);
 app.use('/files', fetchFilesRouter);
 app.use('/createReimb', createReimbRouter);
+app.use('/adReimb', approveDenyReimbRouter);
 
 
 

@@ -100,9 +100,35 @@ function retrieveAllReimbursements(){
 
 }
 
-retrieveAllReimbursements()
+function updateReimbursement(username,timeSubmitted,status,approver){
+
+    let table = "reimbursements";
+    // Update the item, unconditionally,
+
+    var params = {
+        TableName:table,
+        Key:{
+            "username": username,
+            "timeSubmitted": timeSubmitted
+        },
+        UpdateExpression: "set #stat = :st, #app = :un",
+        ExpressionAttributeNames:{
+            '#stat': 'status',
+            '#app' : 'approver',
+        },
+        ExpressionAttributeValues:{
+            ":st": status,
+            ":un": approver,
+        },
+        ReturnValues:"UPDATED_NEW"
+    };
+
+    console.log("Updating the item...");
+    docClient.update(params).promise()
+}
 
 //Export Modules
+module.exports.updateReimbursement = updateReimbursement;
 module.exports.retreiveReimbursement = retreiveReimbursement;
 module.exports.createReimbursement = createReimbursement;
 module.exports.save = save;

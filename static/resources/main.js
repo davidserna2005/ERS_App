@@ -5,6 +5,9 @@ var myNamespace = window.itemNameSpace || {};
 myNamespace.items = [];
 myNamespace.table = {};
 myNamespace.currentTable = {};
+myNamespace.updateTable = {
+    Items:[]
+};
 
 //http logout request
 
@@ -76,7 +79,7 @@ function removeAllItemsFromReimbTable(){
 }
 
 //http call function
-function renderFields(){
+function renderFields(){ 
     fetch('http://localhost:3000/files', {
         headers: {
           'content-type': 'application/json'
@@ -89,12 +92,15 @@ function renderFields(){
           throw 'Invalid Credentials';
         }
         if (resp.status === 200) {
-          return resp.json();
+            return resp.json();
         }
         throw 'Unable to obtain data try again later';
       })
       .then(data => {
+        
         myNamespace.table = data;
+
+        
         function sorDesc(a,b){
             if (a.timeSubmitted > b.timeSubmitted)
               return -1;
@@ -103,7 +109,8 @@ function renderFields(){
             return 0;
         }
         myNamespace.table.Items = myNamespace.table.Items.sort(sorDesc);
-        appendItemsToTable(myNamespace.table);
+        renderPaths();
+        // appendItemsToTable(myNamespace.table);
         
       })
       .catch(err => {
@@ -117,14 +124,14 @@ function appendItemsToTable(data){
     let element = document.getElementById('tbody');
     element.innerHTML = "";
     for(let field of data.Items){
-        console.log(field);
         let date = new Date(field.timeSubmitted);
         // Create New Row
         let newRow = document.createElement('tr');
+        let inputId = Date.now();
         newRow.innerHTML = `
             <tr>
                 <td>${field.username}</td>
-                <td>${date.getFullYear()}/${date.getMonth()}/${date.getDay()}</td>
+                <td>${date.getFullYear()}/${date.getMonth()+1}/${date.getDate()}</td>
                 <td>
                     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#${field.timeSubmitted}">
                                 View Items
@@ -132,12 +139,28 @@ function appendItemsToTable(data){
                 </td>
                 <td>${field.approver}</td>
                 <td>${field.status}</td>
-                <td>$86,000</td>
+                <td>
+                    <div>
+                        <div class="radio" >
+                            <label><input type="radio" name="${field.timeSubmitted}" value="approved" class="${inputId}">Approve</label>
+                        </div>
+                        <div class="radio">
+                            <label><input type="radio" name="${field.timeSubmitted}" value="denied" class="${inputId}">Deny</label>
+                        </div>
+                    <div/>    
+                </td>
             <tr/>
         `;
-       
+        
         // element.insertBefore(newRow, element.firstChild);
         element.appendChild(newRow);
+
+        //select current radion input
+        let radioButton = document.getElementsByClassName(inputId);
+        for(let item of radioButton){
+            item.addEventListener("click", updateCallbackFunction);
+        }
+
         // Create New Modal
         let newModal = document.createElement('div');
         newModal.id = `${field.timeSubmitted}`;
@@ -190,6 +213,8 @@ function appendItemsToTable(data){
         let modals = document.getElementById('modals');
         modals.appendChild(newModal);
     }
+
+    hideShow();
 }
 
 
@@ -279,7 +304,7 @@ function logoutEventInitializer(){
     let logoutButton = document.getElementById('logout');
     logoutButton = logoutButton.addEventListener('click',logout);
 }
-//Search Bar Even Initializers
+//Search Bar Event Initializers
 
 function searchBarsInitializers(){
     let userSearch = document.getElementById('userNameSearch');
@@ -290,6 +315,13 @@ function searchBarsInitializers(){
     statusSearch.addEventListener("change", statusSearchFunction);
     timeSearch.addEventListener("change", timeSearchFunction);
 }
+
+//Submit All Denials/Approvals Evetn Initializer
+function submitDenialApprovalInitializer(){
+    let submitDAButton = document.getElementById('updateItems');
+    submitDAButton.addEventListener("click",submitAD)
+}
+
 
 //Search Functions
 function userSearchFunction(e){
@@ -381,10 +413,98 @@ function timeSearchFunction(e){
 
 }
 
+
+//Submit Approval Denial function
+function submitAD(e){
+    fetch('http://localhost:3000/adReimb', {
+        headers: {
+          'content-type': 'application/json'
+        },
+        body: JSON.stringify(myNamespace.updateTable),
+        credentials: 'include',
+        method: 'POST'
+      })
+      .then(resp => {
+        if (resp.status === 401) {
+          throw 'Invalid Credentials';
+        }
+        if (resp.status === 200) {
+            myNamespace.updateTable.Items = [];
+            console.log("got the response from approvals and denials");
+            setTimeout(renderFields, 100);
+            return;
+        }
+        throw 'Unable to obtain data try again later';
+      })
+      .catch(err => {
+         console.log(err);
+      })
+
+
+
+}
+
+// Radio Button Event Hnadler
+
+function updateCallbackFunction(e){
+    for(let document of myNamespace.updateTable.Items){
+        if(document.timeSubmitted === Number(e.target.name)){
+            document.status = e.target.value;
+            return;
+        }
+    }
+    
+    for(let document of myNamespace.table.Items){
+        if(document.timeSubmitted === Number(e.target.name)){
+            let newDocument = document;
+            newDocument.status = e.target.value;
+            myNamespace.updateTable.Items.push(document);
+            return;
+        }
+    }
+
+}
+
+// hide show fields depending on the user
+function hideShow(){
+    let url = window.location.search;
+    let urlAux = url.split('=');
+    let role = urlAux[1]
+
+    if(role === "employee"){
+        $(`#records tr td:last-child`).css('display','none');
+        $(`#records tr th:last-child`).css('display','none');
+        $('#updateItems').css('display','none');
+    }
+}
+//funcion selects how to render fields 
+function renderPaths(){
+    let status = document.getElementById('statusSelect');
+    console.log(status.options[status.selectedIndex].value);
+    if(status.options[status.selectedIndex].value === "approved" ){
+        statusSearchFunction({target:{value:"approved"}});
+    }else if(status.options[status.selectedIndex].value === "All"){
+        appendItemsToTable(myNamespace.table);
+    }else if(status.options[status.selectedIndex].value === "pending"){
+        statusSearchFunction({target:{value:"pending"}});
+    }
+
+    
+}
+//submit ReimbTable Event Initializer
+function submitReimbItemsInitializer(){
+    let submitReimbButton = document.getElementById('submitReimbTable');
+    submitReimbButton.addEventListener('click',(e)=>{
+        createReimbDB();
+    })
+}
+
 // Fetch User files from database and render them
 
 $(document).ready(()=>{
     renderFields();
+    submitDenialApprovalInitializer();
+    submitReimbItemsInitializer();
     addItemToReimbursementTable();
     removeItemFromReimbursementTable();
     logoutEventInitializer();

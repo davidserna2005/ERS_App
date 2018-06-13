@@ -39,3 +39,10 @@
     overflow:scroll;
     height:100px;
 }
+
+#updateItems{
+    margin-right: 3%;
+}
+
+/* #records tr td:last-child { display: block; }
+#records tr th:last-child { display: block; } */
