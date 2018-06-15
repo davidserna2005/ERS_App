@@ -26,7 +26,9 @@ function login() {
       window.location = '../resources/main.html?role='+data.role;
     })
     .catch(err => {
-      document.getElementById('error-message').innerText = err;
+      let errEl = document.getElementById('error-message');
+      errEl.innerText = "Username/Password not found.";
+      errEl.style.color = "red";
     })
   
   }

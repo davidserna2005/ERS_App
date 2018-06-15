@@ -1,4 +1,4 @@
-export function authMiddleware(...allowedRoles) {
+function authMiddleware(...allowedRoles) {
     return (req, resp, next) => {
       const role = req.session && req.session.role;
       if (role) {
@@ -12,3 +12,5 @@ export function authMiddleware(...allowedRoles) {
       }
     };
   }
+
+module.exports = authMiddleware;

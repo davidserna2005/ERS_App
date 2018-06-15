@@ -24,7 +24,6 @@ function logout(){
           throw 'Invalid Credentials';
         }
         if (resp.status === 200) {
-            console.log(resp);
             window.location = '../sign-in/sign-in.html'
         }
         throw 'Unable to obtain data try again later';
@@ -221,7 +220,6 @@ function appendItemsToTable(data){
 //Event Initializer
 function addItemToReimbursementTable(){
     let itemForm = document.getElementById('addItem');
-    console.log(itemForm);
     itemForm.addEventListener('click',(e)=>{
         // Get All Form Elements
         let title = document.getElementById('title');
@@ -338,7 +336,6 @@ function userSearchFunction(e){
         }
         return false;
     })
-    console.log(newArr);
     let objIn = {
         Items: newArr
     }
@@ -360,7 +357,6 @@ function statusSearchFunction(e){
         newArr = myNamespace.table.Items;
     }
 
-    console.log(newArr);
     let objIn = {
         Items: newArr
     }
@@ -397,7 +393,6 @@ function timeSearchFunction(e){
 
     let newArr = items.sort(sorDesc);
     let wholeArr = myNamespace.table.Items.sort(sorDesc);
-    console.log(newArr);
     if(e.target.value === "Ascending"){
         newArr = items.sort(sorAsc);
         wholeArr = myNamespace.table.Items.sort(sorAsc);
@@ -430,7 +425,6 @@ function submitAD(e){
         }
         if (resp.status === 200) {
             myNamespace.updateTable.Items = [];
-            console.log("got the response from approvals and denials");
             setTimeout(renderFields, 100);
             return;
         }
@@ -480,7 +474,6 @@ function hideShow(){
 //funcion selects how to render fields 
 function renderPaths(){
     let status = document.getElementById('statusSelect');
-    console.log(status.options[status.selectedIndex].value);
     if(status.options[status.selectedIndex].value === "approved" ){
         statusSearchFunction({target:{value:"approved"}});
     }else if(status.options[status.selectedIndex].value === "All"){

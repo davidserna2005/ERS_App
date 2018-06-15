@@ -8,6 +8,7 @@ function save(username, password, fname, lname, email, role){
       });    
 }
 
+
 function readUser(username){
     return ersDao.readUser(username)
 }

@@ -4,8 +4,6 @@ const express = require('express');
 const router = express.Router();
 
 router.post('/',(req,res,next)=>{
-    console.log(req.body[0]);
-    console.log('reimbursement router works');
     ersServices.createReimbursement(req.session.username,req.body)
     .then((data)=>{
         res.statusCode('200');
